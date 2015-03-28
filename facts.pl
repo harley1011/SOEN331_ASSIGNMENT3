@@ -39,10 +39,10 @@ superstate(init, tchk).
 superstate(init, psichk).
 superstate(init, ready).
 
-%% monitor
-superstate(monitor, monidle). 
-superstate(monitor, regulate_environment).
-superstate(monitor, lockdown).
+%% monitoring
+superstate(monitoring, monidle). 
+superstate(monitoring, regulate_environment).
+superstate(monitoring, lockdown).
 
 %% lockdown
 superstate(lockdown, prep_vpurge).
@@ -86,7 +86,7 @@ transition(psichk, ready, psi_ok, null, null).
 %% Transition within monitoring state
 transition(monidle, regulate_environment, no_contagion, null, null).
 transition(regulate_environment, monidle, after_100ms, null, null).
-transition(monidle, lockdown, contagion_alert, null, 'faculty_crit_mesg, inlockdown = true').
+transition(monidle, lockdown, contagion_alert, null, 'faculty_crit_mesg; inlockdown = true').
 transition(lockdown, monidle, purge_succ, null, 'inlockdown = false').
 
 %% Transition within lockdown state
