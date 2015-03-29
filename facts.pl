@@ -14,12 +14,12 @@ state(tchk).
 state(psichk).
 state(ready).
 
-%% States under monitor state
+%% States under monitoring state
 state(monidle).
 state(regulate_environment).
 state(lockdown).
 
-%% States under monitor, lockdown state
+%% States under monitoring, lockdown state
 state(prep_vpurge).
 state(alt_temp).
 state(alt_psi).
@@ -98,8 +98,8 @@ transition(risk_assess, prep_vpurge, null, 'risk > 1%', null).
 transition(risk_assess, safe_status, null, 'risk <= 1%', unlock_doors).
 
 %% Transition within error_diagnosis state
-transition(error_rcv, reset_module_data, null, 'err_protocol_def = true', null).
-transition(error_rcv, applicable_rescue, null, 'err_protocol_def = false', null).
+transition(error_rcv, reset_module_data, apply_protocol_rescues, 'err_protocol_def = true', null).
+transition(error_rcv, applicable_rescue, reset_to_stable, 'err_protocol_def = false', null).
 
 
 
