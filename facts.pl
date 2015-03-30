@@ -6,6 +6,7 @@ state(idle).
 state(monitoring).
 state(error_diagnosis).
 state(safe_shutdown).
+state(exit).
 
 %% States under init state (refer to superstate)
 state(boot_hw).
@@ -25,11 +26,13 @@ state(alt_temp).
 state(alt_psi).
 state(risk_assess).
 state(safe_status).
+state(exit_lockdown).
 
 %% States under error_diagnosis
 state(error_rcv).
 state(reset_module_data).
 state(applicable_rescue).
+state(exit_error_diagnosis).
 
 %% Superstates
 %% init
@@ -50,11 +53,13 @@ superstate(lockdown, alt_temp).
 superstate(lockdown, alt_psi).
 superstate(lockdown, risk_assess).
 superstate(lockdown, safe_status).
+superstate(lockdown, exit_lockdown).
 
 %% error_diagnosis
 superstate(error_diagnosis, error_rcv).
 superstate(error_diagnosis, reset_module_data).
 superstate(error_diagnosis, applicable_rescue).
+superstate(error_diagnosis, exit_error_diagnosis).
 
 %% Initial States
 initial_state(dormant, null).
@@ -96,11 +101,13 @@ transition(alt_temp, risk_assess, tcyc_comp, null, null).
 transition(alt_psi, risk_assess, psicyc_comp, null, null).
 transition(risk_assess, prep_vpurge, null, 'risk > 1%', null).
 transition(risk_assess, safe_status, null, 'risk <= 1%', unlock_doors).
+transistion(safe_status, exit_lockdown, null, null, null).
 
 %% Transition within error_diagnosis state
-transition(error_rcv, reset_module_data, apply_protocol_rescues, 'err_protocol_def = true', null).
-transition(error_rcv, applicable_rescue, reset_to_stable, 'err_protocol_def = false', null).
-
+transition(error_rcv, reset_module_data, null, 'err_protocol_def = true', null).
+transition(error_rcv, applicable_rescue, null, 'err_protocol_def = false', null).
+transition(applicable_rescue, exit_error_diagnosis, apply_protocol_rescues, null, null).
+transition(reset_module_data, exit_error_diagnosis, reset_to_stable, null, null).
 
 
 
