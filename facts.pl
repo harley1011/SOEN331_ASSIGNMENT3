@@ -69,18 +69,18 @@ initial_state(prep_vpurge, lockdown).
 initial_state(error_rcv, error_diagnosis).
 
 %% Transition within the top-level transition(source, destination, event, guard, action)
+transition(dormant, exit, kill, null, null).
 transition(dormant, init, start, null, null).
-transition(dormant, off, kill, null, null).
 transition(init, idle, init_ok, null, null).
-transition(init, error_diagnosis, init_crash, null, init_err_msg).
 transition(idle, monitoring, begin_monitoring, null, null).
-transition(idle, error_diagnosis, idle_crash, null, idle_err_msg).
-transition(monitoring, error_diagnosis, monitor_crash, 'inlockdown = false', moni_err_msg).
+transition(init, error_diagnosis, init_crash, null, init_err_msg).
 transition(error_diagnosis, init, retry_init, 'retry < 3', 'retry++').
-transition(error_diagnosis, idle, idle_rescue, null, null).
-transition(error_diagnosis, monitoring, moni_rescue, null, null).
 transition(error_diagnosis, safe_shutdown, shutdown, 'retry >= 3', 'retry = 0').
 transition(safe_shutdown, dormant, sleep, null, null).
+transition(idle, error_diagnosis, idle_crash, null, idle_err_msg).
+transition(error_diagnosis, idle, idle_rescue, null, null).
+transition(monitoring, error_diagnosis, monitor_crash, null, moni_err_msg).
+transition(error_diagnosis, monitoring, moni_rescue, null, null).
 
 %% Transition within init state
 transition(boot_hw, senchk, hw_ok, null, null).
@@ -101,12 +101,12 @@ transition(alt_temp, risk_assess, tcyc_comp, null, null).
 transition(alt_psi, risk_assess, psicyc_comp, null, null).
 transition(risk_assess, prep_vpurge, null, 'risk > 1%', null).
 transition(risk_assess, safe_status, null, 'risk <= 1%', unlock_doors).
-transistion(safe_status, exit_lockdown, null, null, null).
+transition(safe_status, exit_lockdown, null, null, null).
 
 %% Transition within error_diagnosis state
 transition(error_rcv, reset_module_data, null, 'err_protocol_def = true', null).
-transition(error_rcv, applicable_rescue, null, 'err_protocol_def = false', null).
 transition(applicable_rescue, exit_error_diagnosis, apply_protocol_rescues, null, null).
+transition(error_rcv, applicable_rescue, null, 'err_protocol_def = false', null).
 transition(reset_module_data, exit_error_diagnosis, reset_to_stable, null, null).
 
 
